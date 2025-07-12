@@ -1,27 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
-import Modal from "../components/modal";
+import React from "react";
+import RegistrationModal from "@/components/form";
 
 export default function Home() {
-  // State to control modal visibility
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // State to manage modal visibility
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  /**
-   * Handle opening the registration modal
-   */
-  const handleJoinUsClick = () => {
+  // Function to open modal
+  const openModal = () => {
     setIsModalOpen(true);
-    console.log("JOIN US button clicked - Opening registration modal");
   };
 
-  /**
-   * Handle closing the registration modal
-   */
-  const handleCloseModal = () => {
+  // Function to close modal
+  const closeModal = () => {
     setIsModalOpen(false);
-    console.log("Registration modal closed");
   };
 
   return (
@@ -68,7 +62,7 @@ export default function Home() {
                 uppercase tracking-wider
                 backdrop-blur-sm
               "
-              onClick={handleJoinUsClick}
+              onClick={openModal}
             >
               JOIN US
             </button>
@@ -81,14 +75,14 @@ export default function Home() {
               border border-yellow-400/50
               backdrop-blur-sm
             ">
-              Don't miss the ultimate experience!
+              Don&apos;t miss the ultimate experience!
             </p>
           </div>
         </div>
       </div>
 
       {/* Registration Modal */}
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <RegistrationModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }

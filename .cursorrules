@@ -49,6 +49,7 @@ We are creating a landing page for an event
 ## Testing
 - Dont run the instance unless I ask you to do so
 - Dont create a new Terminal right after prompting or adding a new feature
+- Dont ever run a new dev build ever unless I do
 
 ## AI Assistant Preferences
 - Begin the prompt with  " 🤖 : " always

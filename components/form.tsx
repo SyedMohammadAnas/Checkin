@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as LabelPrimitive from "@radix-ui/react-label";
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import { X } from "lucide-react";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -96,165 +96,234 @@ function Label({
   );
 }
 
-function Separator({
-  className,
-  orientation = "horizontal",
-  decorative = true,
-  ...props
-}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
-  return (
-    <SeparatorPrimitive.Root
-      data-slot="separator-root"
-      decorative={decorative}
-      orientation={orientation}
-      className={cn(
-        "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
-        className
-      )}
-      {...props}
-    />
-  );
+// Modal Component Interface
+interface RegistrationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function FormLayout01() {
-  // State for tracking selected payment method
-  const [selectedPayment, setSelectedPayment] = React.useState<string>("");
+export default function RegistrationModal({ isOpen, onClose }: RegistrationModalProps) {
+  // State for form data
+  const [formData, setFormData] = React.useState({
+    fullName: "",
+    email: "",
+    phoneNumber: ""
+  });
+
+  // State for payment method selection
+  const [paymentMethod, setPaymentMethod] = React.useState<"googlepay" | "phonepe" | null>(null);
+
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!paymentMethod) {
+      alert("Please select a payment method");
+      return;
+    }
+
+    // Handle form submission logic here
+    console.log("Form submitted:", { ...formData, paymentMethod });
+
+    // Close modal after submission
+    onClose();
+  };
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Close modal on escape key
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen, onClose]);
+
+  // Don't render if modal is closed
+  if (!isOpen) return null;
 
   return (
-    <div className="flex items-center justify-center p-10">
-      <div className="sm:mx-auto sm:max-w-2xl">
-        {/* Form Header */}
-        <h3 className="text-2xl font-semibold text-foreground dark:text-foreground">
-          Join Our Event
-        </h3>
-        <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
-          Register now to secure your spot at this amazing event
-        </p>
+    <>
+      {/* Backdrop with blur effect */}
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-md z-50 transition-opacity duration-300 ease-out"
+        onClick={onClose}
+      />
 
-        <form action="#" method="post" className="mt-8">
-          <div className="grid grid-cols-1 gap-x-4 gap-y-6">
-            {/* Full Name Field */}
-            <div className="col-span-full">
-              <Label
-                htmlFor="full-name"
-                className="text-sm font-medium text-foreground dark:text-foreground"
-              >
-                Full Name
-                <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                type="text"
-                id="full-name"
-                name="full-name"
-                autoComplete="name"
-                placeholder="Enter your full name"
-                className="mt-2"
-                required
-              />
-            </div>
+      {/* Modal Container */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        {/* Modal Content */}
+        <div className="relative w-full max-w-md sm:max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-2xl transform transition-all duration-300 ease-out scale-100 opacity-100">
 
-            {/* Email Field */}
-            <div className="col-span-full">
-              <Label
-                htmlFor="email"
-                className="text-sm font-medium text-foreground dark:text-foreground"
-              >
-                Email
-                <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                type="email"
-                id="email"
-                name="email"
-                autoComplete="email"
-                placeholder="Enter your email address"
-                className="mt-2"
-                required
-              />
-            </div>
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 z-10"
+          >
+            <X size={20} className="text-gray-600 dark:text-gray-400" />
+          </button>
 
-            {/* Phone Number Field */}
-            <div className="col-span-full">
-              <Label
-                htmlFor="phone"
-                className="text-sm font-medium text-foreground dark:text-foreground"
-              >
-                Phone Number
-                <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                type="tel"
-                id="phone"
-                name="phone"
-                autoComplete="tel"
-                placeholder="Enter your phone number"
-                className="mt-2"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Payment Method Selection */}
-          <Separator className="my-6" />
-          <div className="space-y-4">
-            <h4 className="text-lg font-medium text-foreground dark:text-foreground">
-              Select Payment Method
-            </h4>
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-              Choose your preferred payment method to complete registration
+          {/* Modal Header */}
+          <div className="p-6 pb-4">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Join the Event! 🎉
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm">
+              Fill in your details to register for the ultimate experience
             </p>
+          </div>
 
-            {/* Payment Method Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Google Pay Button */}
-              <Button
-                type="button"
-                variant={selectedPayment === "googlepay" ? "default" : "outline"}
-                className={`h-12 flex items-center justify-center gap-3 ${
-                  selectedPayment === "googlepay"
-                    ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
-                    : "hover:bg-blue-50 border-gray-300"
-                }`}
-                onClick={() => setSelectedPayment("googlepay")}
-              >
-                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 font-bold text-xs">G</span>
-                </div>
-                Google Pay
-              </Button>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="px-6 pb-6">
+            <div className="space-y-5">
 
-              {/* PhonePe Button */}
-              <Button
-                type="button"
-                variant={selectedPayment === "phonepe" ? "default" : "outline"}
-                className={`h-12 flex items-center justify-center gap-3 ${
-                  selectedPayment === "phonepe"
-                    ? "bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
-                    : "hover:bg-purple-50 border-gray-300"
-                }`}
-                onClick={() => setSelectedPayment("phonepe")}
-              >
-                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">P</span>
+              {/* Full Name Field */}
+              <div>
+                <Label htmlFor="fullName" className="text-gray-700 dark:text-gray-300 font-medium">
+                  Full Name
+                  <span className="text-red-500 ml-1">*</span>
+                </Label>
+                <Input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  placeholder="Enter your full name"
+                  className="mt-2 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                  required
+                />
+              </div>
+
+              {/* Email Field */}
+              <div>
+                <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium">
+                  Email
+                  <span className="text-red-500 ml-1">*</span>
+                </Label>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email address"
+                  className="mt-2 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                  required
+                />
+              </div>
+
+              {/* Phone Number Field */}
+              <div>
+                <Label htmlFor="phoneNumber" className="text-gray-700 dark:text-gray-300 font-medium">
+                  Phone Number
+                  <span className="text-red-500 ml-1">*</span>
+                </Label>
+                <Input
+                  type="tel"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  placeholder="Enter your phone number"
+                  className="mt-2 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 focus:ring-purple-500/20"
+                  required
+                />
+              </div>
+
+              {/* Payment Method Selection */}
+              <div>
+                <Label className="text-gray-700 dark:text-gray-300 font-medium mb-3 block">
+                  Payment Method
+                  <span className="text-red-500 ml-1">*</span>
+                </Label>
+                <div className="grid grid-cols-2 gap-3">
+
+                  {/* Google Pay Button */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("googlepay")}
+                    className={cn(
+                      "p-4 rounded-xl border-2 transition-all duration-300 ease-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500/20",
+                      paymentMethod === "googlepay"
+                        ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300"
+                        : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-purple-300"
+                    )}
+                  >
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">G</span>
+                      </div>
+                      <span className="text-sm font-medium">Google Pay</span>
+                    </div>
+                  </button>
+
+                  {/* PhonePe Button */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("phonepe")}
+                    className={cn(
+                      "p-4 rounded-xl border-2 transition-all duration-300 ease-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500/20",
+                      paymentMethod === "phonepe"
+                        ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300"
+                        : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-purple-300"
+                    )}
+                  >
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">P</span>
+                      </div>
+                      <span className="text-sm font-medium">PhonePe</span>
+                    </div>
+                  </button>
                 </div>
-                PhonePe
-              </Button>
+              </div>
             </div>
 
-            {/* Proceed Button - only shows when payment method is selected */}
-            {selectedPayment && (
-              <div className="flex justify-center pt-4">
-                <Button
-                  type="submit"
-                  className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold"
-                >
-                  Proceed with {selectedPayment === "googlepay" ? "Google Pay" : "PhonePe"}
-                </Button>
-              </div>
-            )}
-          </div>
-        </form>
+            {/* Action Buttons */}
+            <div className="flex items-center justify-between space-x-4 mt-8">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1 h-12 rounded-xl border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className={cn(
+                  "flex-1 h-12 rounded-xl font-semibold transition-all duration-300 ease-out transform hover:scale-105 focus:scale-105",
+                  paymentMethod
+                    ? "bg-gradient-to-r from-purple-600 via-pink-500 to-purple-700 hover:from-purple-700 hover:via-pink-600 hover:to-purple-800 text-white shadow-lg shadow-purple-500/25"
+                    : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                )}
+                disabled={!paymentMethod}
+              >
+                {paymentMethod ? `Proceed with ${paymentMethod === "googlepay" ? "Google Pay" : "PhonePe"}` : "Select Payment Method"}
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
