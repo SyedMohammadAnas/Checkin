@@ -60,8 +60,11 @@ export default function Home() {
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">
               Ready to Experience
-              <span className="block bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent font-rock-salt text-3xl md:text-4xl lg:text-5xl mt-3 md:mt-4 tracking-wide">
-                MASTHI WITH DOSTHI?
+              {/* Gradient headline with adjusted line height and padding to prevent clipping */}
+              <span
+                className="inline-block bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent font-rock-salt text-3xl md:text-4xl lg:text-5xl mt-3 md:mt-4 tracking-wide leading-[1.2] py-2"
+              >
+                MASTHI with DOSTHI?
               </span>
             </h2>
             <p className="text-xl md:text-2xl text-gray-200 max-w-2xl mx-auto leading-relaxed">
@@ -137,7 +140,8 @@ export default function Home() {
           </div>
 
           {/* Contact Information */}
-          <div className="mt-12 md:mt-16 pt-8 border-t border-white/20">
+          {/* Reduced margin-top and padding-top, and removed extra bottom space */}
+          <div className="mt-6 md:mt-8 pt-4 pb-0 border-t border-white/20">
             <div className="text-center">
               <p className="text-gray-300 text-sm md:text-base mb-2">
                 For more information contact:
@@ -153,7 +157,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Registration Modal */}
+      {/* Registration Modal remains unchanged */}
       <RegistrationModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );

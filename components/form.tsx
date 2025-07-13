@@ -7,6 +7,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { X } from "lucide-react";
+import Image from "next/image";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -269,8 +270,16 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                     )}
                   >
                     <div className="flex flex-col items-center space-y-2">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">G</span>
+                      {/* Google Pay Icon */}
+                      <div className="w-8 h-8 flex items-center justify-center">
+                        {/* Actual Google Pay icon - updated path and extension */}
+                        <Image
+                          src="/icons/googlepay-icon.jpeg"
+                          alt="Google Pay"
+                          width={32}
+                          height={32}
+                          className="object-contain rounded-full"
+                        />
                       </div>
                       <span className="text-sm font-medium">Google Pay</span>
                     </div>
@@ -288,8 +297,16 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                     )}
                   >
                     <div className="flex flex-col items-center space-y-2">
-                      <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">P</span>
+                      {/* PhonePe Icon */}
+                      <div className="w-8 h-8 flex items-center justify-center">
+                        {/* Actual PhonePe icon - updated path and extension */}
+                        <Image
+                          src="/icons/phonepe-icon.jpeg"
+                          alt="PhonePe"
+                          width={32}
+                          height={32}
+                          className="object-contain rounded-full"
+                        />
                       </div>
                       <span className="text-sm font-medium">PhonePe</span>
                     </div>
